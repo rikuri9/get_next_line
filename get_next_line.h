@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: riwamoto <riwamoto@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/01 17:00:08 by riwamoto          #+#    #+#             */
-/*   Updated: 2026/11/11 18:46:29 by riwamoto         ###   ########.fr       */
+/*   Created: 2026/11/13 16:31:04 by riwamoto          #+#    #+#             */
+/*   Updated: 2026/11/13 19:18:29 by riwamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,16 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5
+#  define BUFFER_SIZE 42
 # endif
 
 # include <unistd.h>
 # include <stdlib.h>
 
+size_t	ft_strlen(const char *s);
+int		has_newline(char *s);
+char	*join_chunk(char *stash, char *buf);
+size_t	line_len(const char *s);
 char	*get_next_line(int fd);
-int		check_line_break(const char c);
-size_t	get_bytes(const char *s);
-void	*join_line(char *s1, char *s2, int *flag);
-char	*get_line(char *s, int len);
-int		find_line_break(char *s);
 
 #endif

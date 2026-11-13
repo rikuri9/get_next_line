@@ -5,87 +5,74 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: riwamoto <riwamoto@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/01 17:00:05 by riwamoto          #+#    #+#             */
-/*   Updated: 2026/11/11 15:59:05 by riwamoto         ###   ########.fr       */
+/*   Created: 2026/11/13 16:31:00 by riwamoto          #+#    #+#             */
+/*   Updated: 2026/11/13 19:04:38 by riwamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	check_line_break(const char c)
+size_t	ft_strlen(const char *s)
 {
-	return (c == '\n');
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+		len++;
+	return (len);
 }
 
-size_t	get_bytes(const char *s)
+int	has_newline(char *s)
 {
-	size_t	bytes;
+	size_t	i;
 
 	if (!s)
 		return (0);
-	bytes = 0;
-	while (s[bytes])
-		bytes++;
-	return (bytes);
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
-void	*join_line(char *s1, char *s2, int *flag)
+char	*join_chunk(char *stash, char *buf)
 {
-	char	*line;
-	size_t	s1_bytes;
-	size_t	s2_bytes;
+	char	*joined;
+	size_t	stash_len;
+	size_t	buf_len;
 	size_t	i;
 
-	if (!s2)
-		return (NULL);
-	s1_bytes = get_bytes(s1);
-	s2_bytes = get_bytes(s2);
-	line = malloc(sizeof(char) * (s1_bytes + s2_bytes + 1));
-	if (!line)
+	stash_len = 0;
+	if (stash)
+		stash_len = ft_strlen(stash);
+	buf_len = ft_strlen(buf);
+	joined = malloc(sizeof(char) * (stash_len + buf_len + 1));
+	if (!joined)
 		return (NULL);
 	i = 0;
-	while (i < s1_bytes + s2_bytes)
+	while (i < stash_len + buf_len)
 	{
-		if (i < s1_bytes)
-			line[i] = s1[i];
+		if (i < stash_len)
+			joined[i] = stash[i];
 		else
-			line[i] = s2[i - s1_bytes];
-		if (flag && *flag == -1 && check_line_break(line[i]))
-			*flag = i;
+			joined[i] = buf[i - stash_len];
 		i++;
 	}
-	line[i] = '\0';
-	return (line);
+	joined[i] = '\0';
+	return (joined);
 }
 
-char	*get_line(char *s, int len)
+size_t	line_len(const char *s)
 {
-	char	*new_line;
-	int		i;
+	size_t	len;
 
-	new_line = malloc(sizeof(char) * (len + 1));
-	if (!new_line)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		new_line[i] = s[i];
-		i++;
-	}
-	new_line[i] = '\0';
-	return (new_line);
-}
-
-int	find_line_break(char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s && s[i])
-	{
-		if (check_line_break(s[i]))
-			return (i);
-		i++;
-	}
-	return (-1);
+	len = 0;
+	while (s[len] && s[len] != '\n')
+		len++;
+	if (s[len] == '\n')
+		len++;
+	return (len);
 }

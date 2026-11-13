@@ -5,70 +5,108 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: riwamoto <riwamoto@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/01 16:37:14 by riwamoto          #+#    #+#             */
-/*   Updated: 2026/11/11 18:43:03 by riwamoto         ###   ########.fr       */
+/*   Created: 2026/11/13 16:30:18 by riwamoto          #+#    #+#             */
+/*   Updated: 2026/11/13 19:24:50 by riwamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*read_to_stash(int fd, char *stash, int *flag)
+static char	*read_to_stash(int fd, char *stash)
 {
-	char	*save;
-	ssize_t	bytes_read;
+	char	*buf;
 	char	*tmp;
+	ssize_t	bytes_read;
 
-	save = malloc(sizeof(char) * ((size_t)BUFFER_SIZE + 1));
-	if (!save)
+	if (has_newline(stash))
+		return (stash);
+	buf = malloc(sizeof(char) * ((size_t)BUFFER_SIZE + 1));
+	if (!buf)
+		return (free(stash), NULL);
+	while (1)
+	{
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+		if (bytes_read <= 0)
+			break ;
+		buf[bytes_read] = '\0';
+		tmp = stash;
+		stash = join_chunk(tmp, buf);
+		free(tmp);
+		if (!stash || has_newline(buf))
+			break ;
+	}
+	free(buf);
+	if (bytes_read < 0)
+		return (free(stash), NULL);
+	return (stash);
+}
+
+static char	*extract_line(const char *stash)
+{
+	char	*line;
+	size_t	len;
+	size_t	i;
+
+	if (!stash || !*stash)
+		return (NULL);
+	len = line_len(stash);
+	line = malloc(sizeof(char) * (len + 1));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		line[i] = stash[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
+}
+
+static char	*trim_stash(char *stash)
+{
+	char	*rest;
+	size_t	start;
+	size_t	i;
+
+	start = line_len(stash);
+	if (!stash[start])
 	{
 		free(stash);
 		return (NULL);
 	}
-	while (*flag == -1)
+	rest = malloc(sizeof(char) * (ft_strlen(stash + start) + 1));
+	if (!rest)
 	{
-		bytes_read = read(fd, save, BUFFER_SIZE);
-		if (bytes_read <= 0)
-			break ;
-		save[bytes_read] = '\0';
-		tmp = stash;
-		stash = join_line(tmp, save, flag);
-		free(tmp);
+		free(stash);
+		return (NULL);
 	}
-	free(save);
-	return (stash);
-}
-
-static char	*extract_line(char	**stash, int flag)
-{
-	char	*line;
-	char	*tmp;
-
-	if (flag == -1)
+	i = 0;
+	while (stash[start + i])
 	{
-		if (!*stash || !**stash)
-		{
-			free(*stash);
-			*stash = NULL;
-			return (NULL);
-		}
-		line = *stash;
-		*stash = NULL;
-		return (line);
+		rest[i] = stash[start + i];
+		i++;
 	}
-	tmp = *stash;
-	line = get_line(tmp, flag + 1);
-	*stash = join_line(tmp + flag + 1, "", NULL);
-	free(tmp);
-	return (line);
+	rest[i] = '\0';
+	free(stash);
+	return (rest);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*stash;
-	int			line_break_flag;
+	char		*line;
 
-	line_break_flag = find_line_break(stash);
-	if (line_break_flag == -1)
-		stash = read_to_stash(fd, stash, &line_break_flag);
-	return (extract_line(&stash, line_break_flag));
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	stash = read_to_stash(fd, stash);
+	line = extract_line(stash);
+	if (!line)
+	{
+		free(stash);
+		stash = NULL;
+		return (NULL);
+	}
+	stash = trim_stash(stash);
+	return (line);
 }
