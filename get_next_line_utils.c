@@ -6,7 +6,7 @@
 /*   By: riwamoto <riwamoto@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/13 16:31:00 by riwamoto          #+#    #+#             */
-/*   Updated: 2026/11/16 14:32:18 by riwamoto         ###   ########.fr       */
+/*   Updated: 2026/11/16 17:18:38 by riwamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	has_newline(const char *s)
 	return (0);
 }
 
-char	*join_chunk(const char *stash, char *buf)
+char	*join_chunk(const char *stash, const char *buf)
 {
 	char	*joined;
 	size_t	stash_len;
