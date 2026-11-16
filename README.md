@@ -85,7 +85,7 @@ int	main(int argc, char **argv)
 
 このリポジトリには `Makefile` が含まれていません（課題要件より）。
 
-`make` は使えないため以下のコマンドを直接実行。
+`make` は使えないため以下のコマンドを直接実行（test.txtは自身で作成）。
 
 ```bash
 cc -Wall -Wextra -Werror main.c get_next_line*.c
