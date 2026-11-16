@@ -136,8 +136,9 @@ cc -Wall -Wextra -Werror -D BUFFER_SIZE=<数値> main.c get_next_line*.c
 
 - [C言語教室　第33回　static ってなにさ？](https://note.com/kazushinakamura/n/n981fcf8d0546) : `static` 変数の性質の理解に使用
 - [bash で単体テスト](https://qiita.com/waterada/items/98a3c01c7ad88e97595f) : 動作確認用テストの作成に使用
+- [長い文字列作成ツール](https://tools.m-bsys.com/ex/long_text_maker.php#google_vignette) : テストのためのファイル作成に使用
 
 ### How AI was used
 
-- プログラム内でのstatic変数の動きの視覚化
-- READMEのレビュー
+- プログラム内でのstatic変数の動きの視覚化するために使用した。
+- READMEのレビューするために使用した。
